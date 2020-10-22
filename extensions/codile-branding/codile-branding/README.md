@@ -1,0 +1,1 @@
+Branding for Codile, based on [theia-cpp-branding](https://github.com/vince-fugnitto/theia-cpp-branding).

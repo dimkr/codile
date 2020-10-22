@@ -1,0 +1,7 @@
+FROM node:12-stretch-slim
+
+RUN apt-get update -qq && apt-get install -y --no-install-recommends make git python ca-certificates librsvg2-bin pngquant optipng advancecomp fakeroot jq ccache curl ninja-build
+RUN npm install -g node-deb
+RUN git clone https://github.com/nodejs/node --depth 100 -b v12.x && cd node && git checkout `node -v` && sed s/-O3/-O2/g -i `find -name '*.gypi'`
+COPY codile.svg .
+RUN rsvg-convert -w 512 -h 512 -o codile.png codile.svg && pngquant -f --output codile.png --skip-if-larger --quality 0-40 --speed 1 codile.png && optipng -o7 codile.png && advpng -z4 codile.png

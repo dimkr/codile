@@ -1,0 +1,13 @@
+FROM codile:common
+
+RUN apt-get install -y --no-install-recommends gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-armhf-cross libstdc++6-armhf-cross qemu-user-static
+
+ENV CC "ccache arm-linux-gnueabihf-gcc"
+ENV CXX "ccache arm-linux-gnueabihf-g++"
+ENV STRIP arm-linux-gnueabihf-strip
+ENV LDFLAGS -L/usr/arm-linux-gnueabihf/lib
+ENV LD_LIBRARY_PATH /usr/arm-linux-gnueabihf/lib
+ENV npm_config_arch armv7l
+ENV npm_config_target_arch armv7l
+
+RUN ln -s ../usr/arm-linux-gnueabihf/lib/ld-linux-armhf.so.3 /lib/ld-linux-armhf.so.3

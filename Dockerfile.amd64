@@ -1,0 +1,7 @@
+FROM codile:common
+
+RUN apt-get install -y --no-install-recommends gcc g++
+
+ENV CC "ccache gcc"
+ENV CXX "ccache g++"
+ENV STRIP strip

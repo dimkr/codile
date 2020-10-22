@@ -1,0 +1,13 @@
+FROM codile:common
+
+RUN apt-get install -y --no-install-recommends gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-arm64-cross libstdc++6-arm64-cross qemu-user-static
+
+ENV CC "ccache aarch64-linux-gnu-gcc"
+ENV CXX "ccache aarch64-linux-gnu-g++"
+ENV STRIP aarch64-linux-gnu-strip
+ENV LDFLAGS -L/usr/aarch64-linux-gnu/lib
+ENV LD_LIBRARY_PATH /usr/aarch64-linux-gnu/lib
+ENV npm_config_arch arm64
+ENV npm_config_target_arch arm64
+
+RUN ln -s ../usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 /lib/ld-linux-aarch64.so.1

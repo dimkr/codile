@@ -1,0 +1,45 @@
+os: linux
+dist: focal
+language: minimal
+
+jobs:
+  include:
+    - env: CODILE_ARCH=amd64
+    - env: CODILE_ARCH=arm64
+    - env: CODILE_ARCH=armhf
+
+addons:
+  apt:
+    packages:
+    - qemu-user-static
+
+services:
+  - docker
+
+install:
+  - docker build -t codile:common -f Dockerfile.common .
+  - docker build -t codile:$CODILE_ARCH -f Dockerfile.$CODILE_ARCH .
+
+script:
+  - docker run --rm -v `pwd`:/tmp/build -v ~/.ccache:/root/.ccache -w /tmp/build -e CODILE_ARCH codile:$CODILE_ARCH ./build.sh
+
+before_deploy:
+  - export TRAVIS_TAG=$(jq -r .version package.json)-$(git log --format=%h -1)
+  - git tag -f $TRAVIS_TAG
+
+deploy:
+  provider: releases
+  api_key:
+    secure: ixJRz1shgzJiDtm1prpHayzhKMAWsdVL1J/NVGejBaQrrouNIh7cI6X/jqaeD49gGcq9mVfTkIvRgJcDEUG1/Hnvfaw6HmUSpVJu0GOagPm5a1g5ZpXyJVnAtSC8CexuVEvbGSrmqQ78CpTZSbd1VlLSCbWzr4EL1v3scu8weBmzixzqAs7YHjsOMusJpdulzjzaBiWrfAxQD9sDT2z0njtQ51G19IMkmkHFsz3VCCzeL7B1zInPTdVu1mruJLVN+V863ApM0OefETmRaqk+HYM2XDao6WyNMJ4F/HTX3R+2+qRNl1lTwzuCHuuWMYkGCrr/5k/wmfL87k1aKf8Mn+4woik5ZWXvHmtnzsmTrJaM7bupd7CJP46XkSL4NYYTI16DbZ5b5EHGETm22+O77UZrbrqgfAiXN12qx6N3UFNKoWlTDCHOOuEcl3jtaoKplzM5ezSBmdU8GMejMJUHrJ+NqQGio8PS22GQ13OFng8QPJaUeAPmFd0mg9K6QAG1OOgHvOdQ9lFt9r1p2ojFcckeTzasaNvWWxO43uWJuW2VIgNWKszS9WLSZIvS2OtdF5oOOvaTMTSwvO1KIO/nmJpt1oAmijJwwHlN9ToZbzXI0XSv+O8f+4VyMAEw1JB7IdFwY0lEX3TqtJ7EC3b455k6+AlSfagGWPA87FxO2vM=
+  skip_cleanup: true
+  file_glob: true
+  file:
+    - ./out-*/*.deb
+  on:
+    repo: dimkr/codile
+    all_branches: true
+  overwrite: true
+
+cache:
+  directories:
+  - $HOME/.ccache

@@ -1,0 +1,54 @@
+{
+    "name": "codile",
+    "version": "0.0.1",
+    "license": "EPL-2.0",
+    "description": "A web-based IDE",
+    "private": true,
+    "theia": {
+        "frontend": {
+            "config": {
+                "applicationName": "Codile",
+                "defaultTheme": "dark",
+                "preferences": {
+                    "files.enableTrash": false
+                }
+            }
+        }
+    },
+    "dependencies": {
+        "@theia/file-search": "latest",
+        "@theia/markers": "latest",
+        "@theia/messages": "latest",
+        "@theia/navigator": "latest",
+        "@theia/plugin-dev": "latest",
+        "@theia/plugin-ext": "latest",
+        "@theia/plugin-ext-vscode": "latest",
+        "@theia/preferences": "latest",
+        "@theia/search-in-workspace": "latest",
+        "@theia/terminal": "latest",
+        "@theia/vsx-registry": "latest",
+        "codile-branding": "latest",
+        "generator-theia-extension": "^0.1.20",
+        "yo": "^3.1.1"
+    },
+    "devDependencies": {
+        "@theia/cli": "latest"
+    },
+    "theiaPluginsDir": "plugins",
+    "theiaPlugins": {},
+    "scripts": {
+        "prebuild-deb": "npm install -g node-deb",
+        "build-deb": "node-deb --no-default-package-dependencies -- ."
+    },
+    "node_deb": {
+        "init": "none",
+        "dependencies": "",
+        "architecture": "all",
+        "install_strategy": "copy",
+        "executable_name": "codile",
+        "extra_files": "extra",
+        "entrypoints": {
+            "cli": "cli.sh"
+        }
+    }
+}

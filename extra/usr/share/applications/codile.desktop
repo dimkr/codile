@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Codile
+Comment=Web IDE
+GenericName=IDE
+Exec=codile
+Icon=/usr/share/pixmaps/codile.png
+Type=Application
+Categories=TextEditor;Development;IDE;
