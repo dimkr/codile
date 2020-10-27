@@ -3,3 +3,6 @@ Description=Codile
 
 [Service]
 ExecStart=/usr/share/codile/app/daemon.sh
+
+[Install]
+WantedBy=default.target
