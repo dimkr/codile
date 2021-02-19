@@ -25,15 +25,36 @@ jobs:
       uses: actions/checkout@v2
     - name: Prepare build environment
       run: |
+        sudo apt-get install -y qemu-user-static
         docker build -t codile:common -f Dockerfile.common .
         docker build -t codile:$CODILE_ARCH -f Dockerfile.$CODILE_ARCH .
     - name: Get cached ~/.ccache
       uses: actions/cache@v2
       with:
         path: ~/.ccache
-        key: ${{ github.workflow }}-ccache-${{ github.sha }}
+        key: ${{ github.workflow }}-ccache-${{ matrix.arch }}-${{ github.sha }
         restore-keys: |
-          ${{ github.workflow }}-ccache-
+          ${{ github.workflow }}-ccache-${{ matrix.arch }}-
     - name: Build
       run: |
         docker run --rm -v `pwd`:/tmp/build -v ~/.ccache:/root/.ccache -w /tmp/build -e CODILE_ARCH codile:$CODILE_ARCH ./build.sh
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: 0.0.1-v${{ github.run_number }}-${{ matrix.arch }}
+        release_name: 0.0.1-v${{ github.run_number }}-${{ matrix.arch }}
+        draft: false
+        prerelease: true
+    - name: Upload package
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+        asset_path: ./out-${{ matrix.arch }}/codile_0.0.1_${{ matrix.arch }}.deb
+        asset_name: codile_0.0.1_${{ matrix.arch }}.deb
+        asset_content_type: application/octet-stream
