@@ -32,7 +32,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.ccache
-        key: ${{ github.workflow }}-ccache-${{ matrix.arch }}-${{ github.sha }
+        key: ${{ github.workflow }}-ccache-${{ matrix.arch }}-${{ github.sha }}
         restore-keys: |
           ${{ github.workflow }}-ccache-${{ matrix.arch }}-
     - name: Build
