@@ -1,0 +1,39 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+      - ci
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: '0 0 * * 4'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64, armhf]
+    env:
+      CODILE_ARCH: ${{ matrix.arch }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Prepare build environment
+      run: |
+        docker build -t codile:common -f Dockerfile.common .
+        docker build -t codile:$CODILE_ARCH -f Dockerfile.$CODILE_ARCH .
+    - name: Get cached ~/.ccache
+      uses: actions/cache@v2
+      with:
+        path: ~/.ccache
+        key: ${{ github.workflow }}-ccache-${{ github.sha }}
+        restore-keys: |
+          ${{ github.workflow }}-ccache-
+    - name: Build
+      run: |
+        docker run --rm -v `pwd`:/tmp/build -v ~/.ccache:/root/.ccache -w /tmp/build -e CODILE_ARCH codile:$CODILE_ARCH ./build.sh
