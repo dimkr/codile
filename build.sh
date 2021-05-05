@@ -6,7 +6,7 @@ cp -r cli.sh daemon.sh extra $d
 install -D -m 644 /codile.png $d/extra/usr/share/pixmaps/codile.png
 
 builtins=
-for i in cpp css docker go html java javascript json make markdown python rust shellscript typescript xml yaml
+for i in cpp css docker go html java javascript json make markdown python rust shellscript typescript xml yaml git
 do
     builtins="\"vscode-builtin-$i\": `curl -s https://open-vsx.org/api/vscode/$i | jq  .files.download`,$builtins"
 done
