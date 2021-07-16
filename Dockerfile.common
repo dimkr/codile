@@ -1,6 +1,6 @@
 FROM node:12-stretch-slim
 
-RUN apt-get update -qq && apt-get install -y --no-install-recommends make git python ca-certificates librsvg2-bin pngquant optipng advancecomp fakeroot jq ccache curl ninja-build
+RUN apt-get update -qq && apt-get install -y --no-install-recommends make git python ca-certificates librsvg2-bin pngquant optipng advancecomp fakeroot jq ccache curl ninja-build libsecret-1-dev pkg-config
 RUN npm install -g node-deb
 RUN git clone https://github.com/nodejs/node --depth 100 -b v12.x && cd node && git checkout `node -v` && sed s/-O3/-O2/g -i `find -name '*.gypi'`
 COPY codile.svg .
